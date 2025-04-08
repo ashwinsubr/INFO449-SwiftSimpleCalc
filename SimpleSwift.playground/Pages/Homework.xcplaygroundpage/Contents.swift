@@ -1,6 +1,7 @@
 //: # Welcome to the UW Calculator Playground (Simple Version)
 //:
 print("Welcome to the UW Calculator Playground")
+import Foundation
 //: This homework is designed to force you to exercise your knowledge of the Swift programming language. This homework does not involve iOS in any way. It uses the Playground feature of XCode to allow you to interactively write Swift code--the compiler will constantly check your code in the background.
 //:
 //: In this exercise, you will implement a pair of functions that do some simple mathematical calculations.
@@ -27,11 +28,49 @@ print("Welcome to the UW Calculator Playground")
 //: For this latter set of operations, it is safe to assume that `["count"]` (with no additional arguments) is 0, `["avg"]` is also 0, and `["fact"]` is 0. `["1", "fact"]` should return 1, and `["0", "fact"]` should also return 1. (Yes, 0-factorial is 1. True story.)
 //: 
 func calculate(_ args: [String]) -> Int {
-    return -1
+    if let last = args.last {
+        switch last {
+        case "count":
+            return args.count - 1
+        case "avg":
+            if args.count < 2 {
+                return 0
+            }
+            var tempArgs = args
+            tempArgs.popLast()
+            let intArgs = tempArgs.compactMap { Int($0) }
+            let sumArray = intArgs.reduce(0, +)
+            return intArgs.isEmpty ? 0 : sumArray / tempArgs.count
+        case "fact":
+            if let number = Int(args[0]), number >= 0 {
+                return Int((1...max(1, number)).reduce(1, *))
+            } else {
+                return 0
+            }
+        default:
+            break
+        }
+    }
+    
+    if args.count == 3 {
+        guard let left = Int(args[0]), let right = Int(args[2]) else { return 0 }
+        let op = args[1]
+        switch op {
+        case "+": return left + right
+        case "-": return left - right
+        case "*": return left * right
+        case "/": return right != 0 ? left / right : 0
+        case "%": return right != 0 ? left % right : 0
+        default: return 0
+        }
+    }
+    
+    return 0
 }
 
 func calculate(_ arg: String) -> Int {
-    return -1
+    let array = arg.components(separatedBy: " ")
+    return calculate(array)
 }
 
 //: Below this are the test expressions/calls to verify if your code is correct.
@@ -85,7 +124,7 @@ calculate("5 fact") == 120
 //: Implement `calculate([String])` and `calculate(String)` to handle negative numbers. You need only make the tests below pass. (You do not need to worry about "fact"/factorial with negative numbers, for example.)
 //:
 //: This is worth 1 pt
-/*
+
 calculate(["2", "+", "-2"]) == 0
 calculate(["2", "-", "-2"]) == 4
 calculate(["2", "*", "-2"]) == -4
@@ -100,7 +139,7 @@ calculate("2 - -2") == 4
 calculate("-2 / 2") == -1
 
 calculate("1 -2 3 -4 5 count") == 5
-*/
+
  
 //: Implement `calculate([String])` and `calculate(String)` to use 
 //: and return floating-point values. You need only make the tests 
@@ -112,12 +151,50 @@ calculate("1 -2 3 -4 5 count") == 5
 //: Integer-based versions above.
 //: 
 //: This is worth 1 pt
-/*
+
 func calculate(_ args: [String]) -> Double {
-    return -1.0
+    
+    if let last = args.last {
+        switch last {
+        case "count":
+            return Double(args.count) - 1.0
+        case "avg":
+            if args.count < 2 {
+                return 0.0
+            }
+            var tempArgs = args
+            tempArgs.popLast()
+            let doubleArgs = tempArgs.compactMap { Double($0) }
+            let sumArray = doubleArgs.reduce(0, +)
+            return doubleArgs.isEmpty ? 0 : sumArray / Double(tempArgs.count)
+        case "fact":
+            if let number = Int(args[0]), number >= 0 {
+                return Double((1...max(1, number)).reduce(1, *))
+            } else {
+                return 0.0
+            }
+        default:
+            break
+        }
+    }
+    
+    if args.count == 3 {
+        guard let left = Double(args[0]), let right = Double(args[2]) else { return 0.0 }
+        let op = args[1]
+        switch op {
+        case "+": return left + right
+        case "-": return left - right
+        case "*": return left * right
+        case "/": return right != 0 ? left / right : 0.0
+        default: return 0.0
+        }
+    }
+    return 0.0
 }
+
 func calculate(_ arg: String) -> Double {
-    return -1.0
+    let array = arg.components(separatedBy: " ")
+    return calculate(array)
 }
 
 calculate(["2.0", "+", "2.0"]) == 4.0
@@ -127,4 +204,4 @@ calculate(["2.5", "*", "2.5"]) == 6.25
 calculate(["2.0", "/", "2.0"]) == 1.0
 calculate(["2.0", "%", "2.0"]) == 0.0
 calculate("1.0 2.0 3.0 4.0 5.0 count") == 5.0
-*/
+
